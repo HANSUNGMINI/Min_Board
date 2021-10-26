@@ -14,6 +14,55 @@
  		select * from min_board
  	</select>
  	
+ 	
+ 	
+ 	<!-- 검색 조건문  -->
+ 	<sql id="criteria">
+ 		<trim prefix="where (" suffix=")" prefixOverrides="OR">
+ 			<foreach collection="typeArr" item="type">
+ 				<trim prefix="OR">
+ 					<choose>
+ 						<when test="type == 'T'.toString()">
+ 							title like concat('%',#{keyword},'%')
+ 						</when>
+ 						<when test="type == 'C'.toString()">
+ 							content like concat('%',#{keyword},'%')
+ 						</when>
+ 						<when test="type == 'W'.toString()">
+ 							writer like concat('%',#{keyword},'%')
+ 						</when>
+ 					</choose>
+ 				</trim>
+ 			</foreach>
+ 		
+ 		</trim>
+ 	</sql>
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	<!-- 게시판 목록(페이징) -->
+ 	<select id="getListPaging" resultType="com.min.model.BoardVO">
+ 		select * from (
+ 			select bno,title,writer,regdate,updatedate
+ 			from min_board
+ 			<if test="keyword != null">
+ 				<include refid="criteria"></include>
+ 			</if>
+ 			order by bno desc) as T1
+ 		limit #{skip},#{amount}
+ 		
+ 	</select>
+ 	
+ 	<!-- 게시물 총 갯수 -->
+ 	<select id="getTotal" resultType="int">
+ 		select count(*) from min_board
+ 		<if test="keyword != null">
+ 			<include refid="criteria"></include>
+ 		</if>
+ 	</select>
+ 	
  	<!-- 게시판 조회 -->
  	<select id="getPage" resultType="com.min.model.BoardVO">
  		select * from min_board where bno=#{bno}

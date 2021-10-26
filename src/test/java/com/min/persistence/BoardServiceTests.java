@@ -2,6 +2,8 @@ package com.min.persistence;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.min.model.BoardVO;
+import com.min.model.Criteria;
 import com.min.service.BoardSerivce;
 
 
@@ -61,9 +64,19 @@ public class BoardServiceTests {
 //		log.info("result : "+result);
 //	}
 	/*삭제 TEST*/
+//	@Test
+//	public void testDelete() {
+//		int result=service.delete(4);
+//		log.info("result : "+result);
+//	}
+	
+	/*목록 페이징*/
 	@Test
-	public void testDelete() {
-		int result=service.delete(4);
-		log.info("result : "+result);
+	public void testGetListPaging() {
+		Criteria cri=new Criteria();
+		
+		List<BoardVO> list=service.getListPaging(cri);
+		
+		list.forEach(board ->log.info(""+board));
 	}
 }

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.min.model.BoardVO;
+import com.min.model.Criteria;
+import com.min.model.PageMakerDTO;
 import com.min.service.BoardSerivce;
 
 @Controller
@@ -24,11 +26,25 @@ public class BoardController {
 	private BoardSerivce bservice;
 	
 	/*게시판 목록*/
+//	@GetMapping("/list")
+//	public void boardListGET(Model model) {
+//		log.info("게시판 목록 페이지 진입");
+//		
+//		model.addAttribute("list",bservice.getList());
+//	}
+	
+	/*게시판 목록 페이징 접속*/
 	@GetMapping("/list")
-	public void boardListGET(Model model) {
-		log.info("게시판 목록 페이지 진입");
+	public void boardListGET(Model model, Criteria cri) {
+		log.info("boardListGET");
 		
-		model.addAttribute("list",bservice.getList());
+		model.addAttribute("list",bservice.getListPaging(cri));
+		
+		int total=bservice.getTotal(cri);
+		
+		PageMakerDTO pageMake=new PageMakerDTO(cri, total);
+		
+		model.addAttribute("pageMaker",pageMake);
 	}
 	
 	/*게시판 등록페이지 접속*/
@@ -50,14 +66,17 @@ public class BoardController {
 	
 	/*게시판 조회*/
 	@GetMapping("/get")
-	public void boardGetPageGET(int bno,Model model) {
+	public void boardGetPageGET(int bno,Model model,Criteria cri) {
 		model.addAttribute("pageInfo",bservice.getPage(bno));
+		model.addAttribute("cri",cri);
 	}
 	
 	/*게시판 수정(GET)*/
 	@GetMapping("/modify")
-	public void boardModifyGET(int bno,Model model) {
+	public void boardModifyGET(int bno,Model model,Criteria cri) {
 		model.addAttribute("pageInfo",bservice.getPage(bno));
+		
+		model.addAttribute("cri",cri);
 	}
 	
 	/*게시판 수정(POST)*/
@@ -80,6 +99,7 @@ public class BoardController {
 		
 		return "redirect:/board/list";
 	}
+	
 	
 	
 }
